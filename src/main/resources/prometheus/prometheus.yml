@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s  # Set the scrape interval to 15 seconds
+
+scrape_configs:
+  - job_name: 'spring-boot'
+    static_configs:
+      - targets: ['<SPRING_BOOT_APP_HOST>:8080']  # Replace with your Spring Boot app's hostname or IP address
+    metrics_path: '/actuator/prometheus'  # Enable Prometheus endpoint in Spring Boot using Spring Actuator
+
+  - job_name: 'kubernetes-nodes'
+    kubernetes_sd_configs:
+      - role: node
+
+  - job_name: 'kubernetes-pods'
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_label_app]
+        target_label: app

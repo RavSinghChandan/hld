@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: url-shortener-app
+  labels:
+    app: url-shortener
+spec:
+  replicas: 3  # Scale the number of pods as per your needs
+  selector:
+    matchLabels:
+      app: url-shortener
+  template:
+    metadata:
+      labels:
+        app: url-shortener
+    spec:
+      containers:
+        - name: url-shortener
+          image: your-docker-image:latest  # Replace with your Docker image
+          ports:
+            - containerPort: 8080  # Port on which the app will run inside the container
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod  # Use production profile
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: datasource-url  # Reference to Secret for sensitive info
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: datasource-username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: datasource-password

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: url-shortener-service
+spec:
+  selector:
+    app: url-shortener
+  ports:
+    - protocol: TCP
+      port: 8080  # Port exposed inside the cluster
+      targetPort: 8080  # Port the app is running on inside the container
+  type: ClusterIP  # Use LoadBalancer if you need external access

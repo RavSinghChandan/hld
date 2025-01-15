@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        MAVEN_HOME = tool 'M3' // Configure your Maven tool in Jenkins
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    sh 'mvn clean install -DskipTests'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    echo 'Deploying to AWS ECS (or other target)...'
+                    sh '''
+                    aws ecs update-service --cluster your-cluster --service your-service --force-new-deployment
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up workspace'
+            cleanWs()
+        }
+    }
+}
